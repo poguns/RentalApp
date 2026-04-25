@@ -35,16 +35,16 @@ jobs:
           dotnet-version: '10.0.x'
 
       - name: Restore workloads
-        run: dotnet workload restore ./RentalApp/RentalApp.csproj
+        run: dotnet workload restore ./StarterApp/StarterApp.csproj
 
       - name: Restore dependencies
-        run: dotnet restore ./RentalApp.sln
+        run: dotnet restore ./StarterApp.sln
 
       - name: Build
-        run: dotnet build ./RentalApp.sln --configuration Release --no-restore
+        run: dotnet build ./StarterApp.sln --configuration Release --no-restore
 
       - name: Run tests
-        run: dotnet test ./RentalApp.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
+        run: dotnet test ./StarterApp.sln --configuration Release --no-build --verbosity normal --collect:"XPlat Code Coverage"
 
       - name: Upload coverage reports
         uses: codecov/codecov-action@v3

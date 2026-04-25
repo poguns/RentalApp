@@ -34,6 +34,10 @@ public class ApiAuthenticationService : IAuthenticationService
             }
 
             var token = await response.Content.ReadFromJsonAsync<TokenResponse>();
+            //token persistence
+            await SecureStorage.SetAsync("auth_token", token!.Token);
+            await SecureStorage.SetAsync("auth_token_expiry", token.ExpiresAt.ToString("O"));
+
             _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", token!.Token);
 
@@ -90,8 +94,49 @@ public class ApiAuthenticationService : IAuthenticationService
         _currentUser = null;
         _currentUserRoles.Clear();
         _httpClient.DefaultRequestHeaders.Authorization = null;
+
+        //clear storage when user logs out
+        SecureStorage.Remove("auth_token");
+        SecureStorage.Remove("auth_token_expiry");
+
         AuthenticationStateChanged?.Invoke(this, false);
         return Task.CompletedTask;
+    }
+
+    //method to restore session when the app starts
+    public async Task<bool> TryRestoreSessionAsync()
+    {
+        var token = await SecureStorage.GetAsync("auth_token");
+        var expiryStr = await SecureStorage.GetAsync("auth_token_expiry");
+
+        if (token == null || expiryStr == null)
+            return false;
+
+        if (!DateTime.TryParse(expiryStr, out var expiry) || expiry <= DateTime.UtcNow)
+        {
+            SecureStorage.Remove("auth_token");
+            SecureStorage.Remove("auth_token_expiry");
+            return false;
+        }
+
+        _httpClient.DefaultRequestHeaders.Authorization =
+            new AuthenticationHeaderValue("Bearer", token);
+
+        // Reload user profile
+        var meResponse = await _httpClient.GetAsync("users/me");
+        var profile = await meResponse.Content.ReadFromJsonAsync<UserProfileResponse>();
+        _currentUser = new User
+        {
+            Id = profile!.Id,
+            Email = profile.Email,
+            FirstName = profile.FirstName,
+            LastName = profile.LastName,
+            CreatedAt = profile.CreatedAt,
+            IsActive = true
+        };
+
+        AuthenticationStateChanged?.Invoke(this, true);
+        return true;
     }
 
     public bool HasRole(string roleName) =>

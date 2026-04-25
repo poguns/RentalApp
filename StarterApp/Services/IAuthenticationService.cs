@@ -13,7 +13,8 @@ public interface IAuthenticationService
     Task<AuthenticationResult> LoginAsync(string email, string password);
     Task<AuthenticationResult> RegisterAsync(string firstName, string lastName, string email, string password);
     Task LogoutAsync();
-    
+    Task<bool> TryRestoreSessionAsync();
+
     bool HasRole(string roleName);
     bool HasAnyRole(params string[] roleNames);
     bool HasAllRoles(params string[] roleNames);

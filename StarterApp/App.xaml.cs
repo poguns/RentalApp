@@ -1,13 +1,17 @@
 ﻿using StarterApp.ViewModels;
+using StarterApp.Services;
 
 namespace StarterApp;
 
 public partial class App : Application
 {
 	private readonly IServiceProvider _serviceProvider;
-	public App(IServiceProvider serviceProvider)
+	private readonly IAuthenticationService _authService;
+
+	public App(IServiceProvider serviceProvider, IAuthenticationService authService)
 	{
 		_serviceProvider = serviceProvider;
+		_authService = authService;
 		InitializeComponent();
 
 		Routing.RegisterRoute(nameof(Views.MainPage), typeof(Views.MainPage));
@@ -28,8 +32,25 @@ public partial class App : Application
 		{
 			// Handle the error if AppShell could not be resolved
 			throw new InvalidOperationException("AppShell could not be resolved from the service provider.");
+
 		}
+		//kick off session restore after window is created
+		_ = RestoreSessionAsync();
+
 		var window = new Window(shell);
 		return window;
 	}
+
+	private async Task RestoreSessionAsync()
+    {
+        // Small delay so the shell/navigation stack fully initialise
+        await Task.Delay(100);
+
+        var restored = await _authService.TryRestoreSessionAsync();
+
+        if (restored)
+            await Shell.Current.GoToAsync("//MainPage");
+        else
+            await Shell.Current.GoToAsync("//LoginPage");
+    }
 }

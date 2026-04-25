@@ -114,6 +114,12 @@ public class AuthenticationService : IAuthenticationService
         return Task.CompletedTask;
     }
 
+    public Task<bool> TryRestoreSessionAsync()
+    {
+        // Local auth doesn't use tokens — always require login
+        return Task.FromResult(false);
+    }
+
     public bool HasRole(string roleName)
     {
         return _currentUserRoles.Contains(roleName, StringComparer.OrdinalIgnoreCase);
