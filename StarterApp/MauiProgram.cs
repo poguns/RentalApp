@@ -1,6 +1,7 @@
 using Microsoft.Extensions.Logging;
 using StarterApp.ViewModels;
 using StarterApp.Database.Data;
+using StarterApp.Database.Data.Repositories;
 using StarterApp.Views;
 using System.Diagnostics;
 using StarterApp.Services;
@@ -37,6 +38,18 @@ public static class MauiProgram
         {
             builder.Services.AddDbContext<AppDbContext>();
             builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
+        }
+
+        if (useSharedApi)
+        {
+            // existing HttpClient and auth registration...
+            builder.Services.AddSingleton<IItemService, ApiItemService>();
+        }
+        else
+        {
+            // existing DbContext and auth registration...
+            builder.Services.AddScoped<IItemRepository, ItemRepository>();
+            builder.Services.AddSingleton<IItemService, ItemService>();
         }
 
         builder.Services.AddSingleton<INavigationService, NavigationService>();
