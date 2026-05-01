@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:Class="StarterApp.Views.CreateEditItemPage"
+             x:DataType="viewmodels:CreateEditItemViewModel"
+             Title="{Binding IsEditing, Converter={StaticResource BoolToStringConverter}, 
+                     ConverterParameter='Edit Item|Add Item'}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="12">
+
+            <Label Text="Title" FontAttributes="Bold" />
+            <Entry Text="{Binding Title}"
+                   Placeholder="What are you lending?" />
+
+            <Label Text="Description" FontAttributes="Bold" />
+            <Editor Text="{Binding Description}"
+                    Placeholder="Describe your item..."
+                    HeightRequest="120" />
+
+            <Label Text="Daily Rate (£)" FontAttributes="Bold" />
+            <Entry Text="{Binding DailyRate}"
+                   Placeholder="0.00"
+                   Keyboard="Numeric" />
+
+            <Label Text="Category" FontAttributes="Bold" />
+            <Entry Text="{Binding Category}"
+                   Placeholder="e.g. Tools, Sports, Electronics" />
+
+            <Label Text="Location" FontAttributes="Bold" />
+            <Entry Text="{Binding Location}"
+                   Placeholder="Where is the item located?" />
+
+            <Label Text="{Binding ErrorMessage}"
+                   TextColor="Red"
+                   IsVisible="{Binding ErrorMessage, 
+                               Converter={StaticResource StringToBoolConverter}}" />
+
+            <Button Text="{Binding IsEditing, 
+                           Converter={StaticResource BoolToStringConverter},
+                           ConverterParameter='Save Changes|Create Listing'}"
+                    Command="{Binding SaveCommand}"
+                    IsEnabled="{Binding IsBusy, 
+                                Converter={StaticResource InvertedBoolConverter}}" />
+
+            <Button Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="Gray"
+                    TextColor="White" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

@@ -3,7 +3,6 @@ using StarterApp.ViewModels;
 using StarterApp.Database.Data;
 using StarterApp.Database.Data.Repositories;
 using StarterApp.Views;
-using System.Diagnostics;
 using StarterApp.Services;
 
 namespace StarterApp;
@@ -70,6 +69,12 @@ public static class MauiProgram
         builder.Services.AddTransient<UserDetailViewModel>();
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
+        builder.Services.AddTransient<ItemsListViewModel>();
+        builder.Services.AddTransient<ItemsListPage>();
+        builder.Services.AddTransient<ItemDetailViewModel>();
+        builder.Services.AddTransient<ItemDetailPage>();
+        builder.Services.AddTransient<CreateEditItemViewModel>();
+        builder.Services.AddTransient<CreateEditItemPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
