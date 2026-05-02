@@ -1,13 +1,11 @@
+using StarterApp.Database.Data.Repositories;
 using StarterApp.Database.Models;
 
 namespace StarterApp.Database.Data.Repositories;
 
-public interface IRentalRepository
+public interface IRentalRepository : IRepository<Rental>
 {
     Task<List<Rental>> GetByItemIdAsync(int itemId);
     Task<List<Rental>> GetByBorrowerIdAsync(int borrowerId);
     Task<List<Rental>> GetByOwnerIdAsync(int ownerId);
-    Task<Rental?> GetByIdAsync(int id);
-    Task<Rental> CreateAsync(Rental rental);
-    Task UpdateAsync(Rental rental);
 }
