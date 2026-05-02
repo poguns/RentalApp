@@ -1,0 +1,97 @@
+using System.Net.Http.Json;
+using StarterApp.Database.Models;
+
+namespace StarterApp.Services;
+
+public class ApiRentalService : IRentalService
+{
+    private readonly HttpClient _httpClient;
+
+    public ApiRentalService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
+
+    public async Task<List<Rental>> GetIncomingRentalsAsync()
+    {
+        var response = await _httpClient
+            .GetFromJsonAsync<List<ApiRentalResponse>>("rentals/incoming");
+        return response?.Select(MapToRental).ToList() ?? new List<Rental>();
+    }
+
+    public async Task<List<Rental>> GetOutgoingRentalsAsync()
+    {
+        var response = await _httpClient
+            .GetFromJsonAsync<List<ApiRentalResponse>>("rentals/outgoing");
+        return response?.Select(MapToRental).ToList() ?? new List<Rental>();
+    }
+
+    public async Task<bool> CanRentItem(int itemId, DateTime startDate, DateTime endDate)
+    {
+        var response = await _httpClient.GetFromJsonAsync<AvailabilityResponse>(
+            $"items/{itemId}/availability?startDate={startDate:O}&endDate={endDate:O}");
+        return response?.Available ?? false;
+    }
+
+    public async Task<Rental> RequestRental(int itemId, int borrowerId,
+                                             DateTime startDate, DateTime endDate)
+    {
+        var response = await _httpClient.PostAsJsonAsync("rentals", new
+        {
+            itemId, startDate, endDate
+        });
+
+        response.EnsureSuccessStatusCode();
+        var created = await response.Content.ReadFromJsonAsync<ApiRentalResponse>();
+        return MapToRental(created!);
+    }
+
+    public async Task ApproveRental(int rentalId)
+    {
+        var response = await _httpClient
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Approved" });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task RejectRental(int rentalId)
+    {
+        var response = await _httpClient
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Rejected" });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task ReturnRental(int rentalId)
+    {
+        var response = await _httpClient
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Returned" });
+        response.EnsureSuccessStatusCode();
+    }
+
+    private static Rental MapToRental(ApiRentalResponse r) => new Rental
+    {
+        Id = r.Id,
+        ItemId = r.ItemId,
+        BorrowerId = r.BorrowerId,
+        StartDate = r.StartDate,
+        EndDate = r.EndDate,
+        Status = r.Status,
+        CreatedAt = r.CreatedAt,
+        Item = r.Item == null ? null : new Item
+        {
+            Id = r.Item.Id,
+            Title = r.Item.Title,
+            DailyRate = r.Item.DailyRate,
+            OwnerId = r.Item.OwnerId
+        }
+    };
+
+    private record ApiRentalResponse(
+        int Id, int ItemId, int BorrowerId,
+        DateTime StartDate, DateTime EndDate,
+        string Status, DateTime CreatedAt,
+        ApiItemSummary? Item
+    );
+
+    private record ApiItemSummary(int Id, string Title, decimal DailyRate, int OwnerId);
+    private record AvailabilityResponse(bool Available);
+}

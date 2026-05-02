@@ -38,6 +38,8 @@ public class AppDbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Item> Items { get; set; }
+    public DbSet<Rental> Rentals { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -88,6 +90,23 @@ public class AppDbContext : DbContext
             entity.HasOne(i => i.Owner)
                 .WithMany()
                 .HasForeignKey(i => i.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Rental>(entity =>
+        {
+            entity.HasIndex(e => e.ItemId);
+            entity.HasIndex(e => e.BorrowerId);
+            entity.Property(e => e.Status).HasMaxLength(50);
+
+            entity.HasOne(r => r.Item)
+                .WithMany()
+                .HasForeignKey(r => r.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Borrower)
+                .WithMany()
+                .HasForeignKey(r => r.BorrowerId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }

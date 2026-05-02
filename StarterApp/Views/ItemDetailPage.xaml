@@ -46,6 +46,13 @@
                    TextColor="Gray"
                    FontSize="12" />
 
+              <Button Text="Request Rental"
+                     Command="{Binding GoToRentItemCommand}"
+                     BackgroundColor="#512BD4"
+                     TextColor="White"
+                     IsVisible="{Binding IsOwner,
+                            Converter={StaticResource InvertedBoolConverter}}" />
+
             <!-- Delete button — owner only -->
             <Button Text="Delete Item"
                     Command="{Binding DeleteItemCommand}"

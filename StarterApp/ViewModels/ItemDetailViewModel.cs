@@ -2,6 +2,7 @@ using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using StarterApp.Database.Models;
 using StarterApp.Services;
+using StarterApp.Views;
 
 namespace StarterApp.ViewModels;
 
@@ -35,6 +36,15 @@ public partial class ItemDetailViewModel : BaseViewModel
     {
         await Shell.Current.GoToAsync(
             nameof(Views.CreateEditItemPage),
+            new Dictionary<string, object> { ["Item"] = Item! }
+        );
+    }
+
+    [RelayCommand]
+    private async Task GoToRentItemAsync()
+    {
+        await Shell.Current.GoToAsync(
+            nameof(Views.CreateRentalPage),
             new Dictionary<string, object> { ["Item"] = Item! }
         );
     }

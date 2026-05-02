@@ -19,6 +19,12 @@
             <ShellContent Route="ItemsListPage" ContentTemplate="{DataTemplate views:ItemsListPage}" />
         </Tab>
 
+        <Tab Title="Rentals">
+            <ShellContent
+                Route="RentalsPage"
+                ContentTemplate="{DataTemplate views:RentalsPage}" />
+        </Tab>
+
         <Tab Title="Profile" Icon="dotnet_bot.png">
             <ShellContent Route="MainPage" ContentTemplate="{DataTemplate views:MainPage}" />
         </Tab>

@@ -24,6 +24,7 @@ public static class MauiProgram
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
 
+        //aunthentication
         if (useSharedApi)
         {
             var httpClient = new HttpClient
@@ -39,6 +40,7 @@ public static class MauiProgram
             builder.Services.AddSingleton<IAuthenticationService, AuthenticationService>();
         }
 
+        //items management
         if (useSharedApi)
         {
             // existing HttpClient and auth registration
@@ -49,6 +51,17 @@ public static class MauiProgram
             // existing DbContext and auth registration
             builder.Services.AddScoped<IItemRepository, ItemRepository>();
             builder.Services.AddSingleton<IItemService, ItemService>();
+        }
+
+        //rental service
+        if (useSharedApi)
+        {
+            builder.Services.AddSingleton<IRentalService, ApiRentalService>();
+        }
+        else
+        {
+            builder.Services.AddScoped<IRentalRepository, RentalRepository>();
+            builder.Services.AddSingleton<IRentalService, RentalService>();
         }
 
         builder.Services.AddSingleton<INavigationService, NavigationService>();
@@ -69,12 +82,18 @@ public static class MauiProgram
         builder.Services.AddTransient<UserDetailViewModel>();
         builder.Services.AddSingleton<TempViewModel>();
         builder.Services.AddTransient<TempPage>();
+        //items
         builder.Services.AddTransient<ItemsListViewModel>();
         builder.Services.AddTransient<ItemsListPage>();
         builder.Services.AddTransient<ItemDetailViewModel>();
         builder.Services.AddTransient<ItemDetailPage>();
         builder.Services.AddTransient<CreateEditItemViewModel>();
         builder.Services.AddTransient<CreateEditItemPage>();
+        //rentals
+        builder.Services.AddTransient<RentalsViewModel>();
+        builder.Services.AddTransient<RentalsPage>();
+        builder.Services.AddTransient<CreateRentalViewModel>();
+        builder.Services.AddTransient<CreateRentalPage>();
 
 #if DEBUG
         builder.Logging.AddDebug();
