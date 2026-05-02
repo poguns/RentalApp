@@ -84,7 +84,7 @@ public partial class LoginViewModel : BaseViewModel
 
             if (result.IsSuccess)
             {
-                await _navigationService.NavigateToAsync("MainPage");
+                await _navigationService.NavigateToAsync("//ItemsListPage");
             }
             else
             {

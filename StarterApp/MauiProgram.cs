@@ -11,7 +11,7 @@ public static class MauiProgram
 {
     // Set useSharedApi to true to connect to the shared REST API,
     // or false to use the local PostgreSQL database.
-    const bool useSharedApi = false;
+    const bool useSharedApi = true;
 
     public static MauiApp CreateMauiApp()
     {
@@ -41,12 +41,12 @@ public static class MauiProgram
 
         if (useSharedApi)
         {
-            // existing HttpClient and auth registration...
+            // existing HttpClient and auth registration
             builder.Services.AddSingleton<IItemService, ApiItemService>();
         }
         else
         {
-            // existing DbContext and auth registration...
+            // existing DbContext and auth registration
             builder.Services.AddScoped<IItemRepository, ItemRepository>();
             builder.Services.AddSingleton<IItemService, ItemService>();
         }
