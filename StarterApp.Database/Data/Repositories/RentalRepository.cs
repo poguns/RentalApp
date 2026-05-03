@@ -63,4 +63,23 @@ public class RentalRepository : IRentalRepository
         _context.Rentals.Update(rental);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<List<Rental>> GetAllAsync()
+    {
+        return await _context.Rentals
+            .Include(r => r.Item)
+            .Include(r => r.Borrower)
+            .OrderByDescending(r => r.CreatedAt)
+            .ToListAsync();
+    }
+
+    public async Task DeleteAsync(int id)
+    {
+        var rental = await _context.Rentals.FindAsync(id);
+        if (rental != null)
+        {
+            _context.Rentals.Remove(rental);
+            await _context.SaveChangesAsync();
+        }
+    }
 }

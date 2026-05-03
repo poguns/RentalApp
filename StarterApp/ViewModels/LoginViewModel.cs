@@ -93,7 +93,10 @@ public partial class LoginViewModel : BaseViewModel
         }
         catch (Exception ex)
         {
-            SetError($"Login failed: {ex.Message}");
+            var fullError = $"{ex.GetType().Name}: {ex.Message}";
+            if (ex.InnerException != null)
+                fullError += $" | Inner: {ex.InnerException.GetType().Name}: {ex.InnerException.Message}";
+            SetError(fullError);        
         }
         finally
         {

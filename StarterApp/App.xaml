@@ -6,12 +6,12 @@
              x:Class="StarterApp.App">
     <Application.Resources>
         <ResourceDictionary>
-            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
-            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
             <ResourceDictionary.MergedDictionaries>
                 <ResourceDictionary Source="Resources/Styles/Colors.xaml" />
                 <ResourceDictionary Source="Resources/Styles/Styles.xaml" />
             </ResourceDictionary.MergedDictionaries>
+            <converters:InvertedBoolConverter x:Key="InvertedBoolConverter" />
+            <converters:StringToBoolConverter x:Key="StringToBoolConverter" />
         </ResourceDictionary>
     </Application.Resources>
 </Application>
