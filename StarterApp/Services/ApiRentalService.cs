@@ -15,15 +15,15 @@ public class ApiRentalService : IRentalService
     public async Task<List<Rental>> GetIncomingRentalsAsync()
     {
         var response = await _httpClient
-            .GetFromJsonAsync<List<ApiRentalResponse>>("rentals/incoming");
-        return response?.Select(MapToRental).ToList() ?? new List<Rental>();
+            .GetFromJsonAsync<ApiRentalWrapper>("rentals/incoming");
+        return response?.Rentals?.Select(r => MapToRental(r)).ToList() ?? new List<Rental>();
     }
 
     public async Task<List<Rental>> GetOutgoingRentalsAsync()
     {
         var response = await _httpClient
-            .GetFromJsonAsync<List<ApiRentalResponse>>("rentals/outgoing");
-        return response?.Select(MapToRental).ToList() ?? new List<Rental>();
+            .GetFromJsonAsync<ApiRentalWrapper>("rentals/outgoing");
+        return response?.Rentals?.Select(MapToRental).ToList() ?? new List<Rental>();
     }
 
     public async Task<bool> CanRentItem(int itemId, DateTime startDate, DateTime endDate)
@@ -91,6 +91,15 @@ public class ApiRentalService : IRentalService
         string Status, DateTime CreatedAt,
         ApiItemSummary? Item
     );
+
+    private class ApiRentalWrapper
+    {
+        public List<ApiRentalResponse> Rentals { get; set; } = new();
+        public int TotalItems { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
+    }
 
     private record ApiItemSummary(int Id, string Title, decimal DailyRate, int OwnerId);
     private record AvailabilityResponse(bool Available);
