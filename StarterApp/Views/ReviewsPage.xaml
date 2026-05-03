@@ -1,0 +1,184 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             xmlns:models="clr-namespace:StarterApp.Database.Models;assembly=StarterApp.Database"
+             x:Class="StarterApp.Views.ReviewsPage"
+             x:DataType="viewmodels:ReviewsViewModel"
+             Title="{Binding Title}">
+
+    <Grid RowDefinitions="Auto,Auto,*,Auto">
+
+        <!-- Average rating summary -->
+        <Border Grid.Row="0"
+                Padding="16"
+                Margin="16,16,16,8"
+                StrokeShape="RoundRectangle 8"
+                BackgroundColor="#F5F5F5">
+            <Grid ColumnDefinitions="*,Auto">
+
+                <VerticalStackLayout Grid.Column="0" Spacing="4">
+                    <Label Text="Average Rating"
+                           TextColor="Gray"
+                           FontSize="13" />
+                    <Label Text="{Binding AverageRating, StringFormat='{0:F1} / 5.0'}"
+                           FontSize="24"
+                           FontAttributes="Bold" />
+                    <Label Text="{Binding ReviewCount}"
+                           TextColor="Gray"
+                           FontSize="13" />
+                </VerticalStackLayout>
+
+                <Label Grid.Column="1"
+                       Text="★"
+                       FontSize="48"
+                       TextColor="#FFD700"
+                       VerticalOptions="Center" />
+
+            </Grid>
+        </Border>
+
+        <!-- Error message -->
+        <Label Grid.Row="1"
+               Text="{Binding ErrorMessage}"
+               IsVisible="{Binding HasError}"
+               TextColor="Red"
+               HorizontalOptions="Center"
+               Padding="16,0" />
+
+        <!-- Reviews list -->
+        <ScrollView Grid.Row="2">
+            <VerticalStackLayout Spacing="8" Padding="16,0">
+
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center" />
+
+                <!-- Empty state -->
+                <Label Text="No reviews yet — be the first!"
+                       IsVisible="{Binding Reviews.Count,
+                                   Converter={StaticResource IntToBoolConverter}}"
+                       HorizontalOptions="Center"
+                       TextColor="Gray"
+                       Margin="0,32,0,0" />
+
+                <!-- Review cards -->
+                <CollectionView ItemsSource="{Binding Reviews}">
+                    <CollectionView.ItemTemplate>
+                        <DataTemplate x:DataType="models:Review">
+                            <Border Margin="0,4"
+                                    Padding="16"
+                                    StrokeShape="RoundRectangle 8">
+                                <Grid RowDefinitions="Auto,Auto,Auto,Auto"
+                                      RowSpacing="6">
+
+                                    <!-- Reviewer name and star rating -->
+                                    <Grid Grid.Row="0"
+                                          ColumnDefinitions="*,Auto">
+                                        <Label Grid.Column="0"
+                                               FontAttributes="Bold"
+                                               FontSize="14">
+                                            <Label.FormattedText>
+                                                <FormattedString>
+                                                    <Span Text="{Binding Reviewer.FirstName}" />
+                                                    <Span Text=" " />
+                                                    <Span Text="{Binding Reviewer.LastName}" />
+                                                </FormattedString>
+                                            </Label.FormattedText>
+                                        </Label>
+                                        <Label Grid.Column="1"
+                                               Text="{Binding RatingDisplay}"
+                                               TextColor="#FFD700"
+                                               FontSize="14" />
+                                    </Grid>
+
+                                    <!-- Comment -->
+                                    <Label Grid.Row="1"
+                                           Text="{Binding Comment}"
+                                           FontSize="13" />
+
+                                    <!-- Date -->
+                                    <Label Grid.Row="2"
+                                           Text="{Binding CreatedAt, StringFormat='{0:dd MMM yyyy}'}"
+                                           TextColor="Gray"
+                                           FontSize="12" />
+
+                                    <!-- Delete button — own reviews only -->
+                                    <Button Grid.Row="3"
+                                            Text="Delete"
+                                            FontSize="12"
+                                            BackgroundColor="Transparent"
+                                            TextColor="Red"
+                                            HorizontalOptions="End"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ReviewsViewModel}}, Path=DeleteReviewCommand}"
+                                            CommandParameter="{Binding .}" />
+
+                                </Grid>
+                            </Border>
+                        </DataTemplate>
+                    </CollectionView.ItemTemplate>
+                </CollectionView>
+
+            </VerticalStackLayout>
+        </ScrollView>
+
+        <!-- Write review form — only visible when CanReview and ShowReviewForm -->
+        <Border Grid.Row="3"
+                Padding="16"
+                StrokeShape="RoundRectangle 8"
+                Margin="16"
+                IsVisible="{Binding CanReview}">
+            <VerticalStackLayout Spacing="12">
+
+                <Button Text="{Binding ShowReviewForm,
+                               Converter={StaticResource BoolToStringConverter},
+                               ConverterParameter='Cancel|Write a Review'}"
+                        Command="{Binding ToggleReviewFormCommand}"
+                        BackgroundColor="#512BD4"
+                        TextColor="White" />
+
+                <!-- Form fields — only when expanded -->
+                <VerticalStackLayout IsVisible="{Binding ShowReviewForm}"
+                                     Spacing="8">
+
+                    <Label Text="Your Rating" FontAttributes="Bold" />
+
+                    <!-- Star rating buttons -->
+                    <HorizontalStackLayout Spacing="8">
+                        <Button Text="1★" Command="{Binding SetRatingCommand}"
+                                CommandParameter="1" FontSize="12" />
+                        <Button Text="2★" Command="{Binding SetRatingCommand}"
+                                CommandParameter="2" FontSize="12" />
+                        <Button Text="3★" Command="{Binding SetRatingCommand}"
+                                CommandParameter="3" FontSize="12" />
+                        <Button Text="4★" Command="{Binding SetRatingCommand}"
+                                CommandParameter="4" FontSize="12" />
+                        <Button Text="5★" Command="{Binding SetRatingCommand}"
+                                CommandParameter="5" FontSize="12" />
+                    </HorizontalStackLayout>
+
+                    <Label Text="{Binding SelectedRating,
+                                  StringFormat='Selected: {0} stars'}"
+                           TextColor="Gray"
+                           FontSize="12" />
+
+                    <Label Text="Your Comment" FontAttributes="Bold" />
+                    <Editor Text="{Binding Comment}"
+                            Placeholder="Share your experience..."
+                            HeightRequest="100" />
+
+                    <Button Text="Submit Review"
+                            Command="{Binding SubmitReviewCommand}"
+                            IsEnabled="{Binding IsBusy,
+                                        Converter={StaticResource InvertedBoolConverter}}"
+                            BackgroundColor="#512BD4"
+                            TextColor="White" />
+
+                </VerticalStackLayout>
+
+            </VerticalStackLayout>
+        </Border>
+
+    </Grid>
+
+</ContentPage>

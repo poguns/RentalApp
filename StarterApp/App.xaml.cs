@@ -26,6 +26,7 @@ public partial class App : Application
 		Routing.RegisterRoute(nameof(Views.CreateEditItemPage), typeof(Views.CreateEditItemPage));
 		Routing.RegisterRoute(nameof(Views.RentalsPage), typeof(Views.RentalsPage));
 		Routing.RegisterRoute(nameof(Views.CreateRentalPage), typeof(Views.CreateRentalPage));
+		Routing.RegisterRoute(nameof(Views.ReviewsPage), typeof(Views.ReviewsPage));
 	}
 
 	protected override Window CreateWindow(IActivationState? activationState)

@@ -52,6 +52,12 @@
                      TextColor="White"
                      IsVisible="{Binding IsOwner,
                             Converter={StaticResource InvertedBoolConverter}}" />
+              
+              <Button Text="{Binding AverageRating,
+                            StringFormat='See Reviews ({0:F1}★)'}"
+                     Command="{Binding GoToReviewsCommand}"
+                     BackgroundColor="#E3F2FD"
+                     TextColor="#1565C0" />
 
             <!-- Delete button — owner only -->
             <Button Text="Delete Item"
