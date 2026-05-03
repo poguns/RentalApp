@@ -14,8 +14,8 @@ public class ApiItemService : IItemService
 
     public async Task<List<Item>> GetItemsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<List<ApiItemResponse>>("items");
-        return response?.Select(MapToItem).ToList() ?? new List<Item>();
+        var response = await _httpClient.GetFromJsonAsync<ApiItemsWrapper>("items");
+        return response?.Items?.Select(r => MapToItem(r)).ToList() ?? new List<Item>();
     }
 
     public async Task<Item?> GetItemAsync(int id)
@@ -26,8 +26,8 @@ public class ApiItemService : IItemService
 
     public async Task<List<Item>> GetMyItemsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<List<ApiItemResponse>>("items/mine");
-        return response?.Select(MapToItem).ToList() ?? new List<Item>();
+        var response = await _httpClient.GetFromJsonAsync<ApiItemsWrapper>("items/mine");
+        return response?.Items?.Select(r => MapToItem(r)).ToList() ?? new List<Item>();
     }
 
     public async Task<Item> CreateItemAsync(string title, string description,
@@ -92,4 +92,13 @@ public class ApiItemService : IItemService
         int OwnerId,
         DateTime CreatedAt
     );
+
+    private class ApiItemsWrapper
+    {
+        public List<ApiItemResponse> Items { get; set; } = new();
+        public int TotalItems { get; set; }
+        public int Page { get; set; }
+        public int PageSize { get; set; }
+        public int TotalPages { get; set; }
+    }
 }
