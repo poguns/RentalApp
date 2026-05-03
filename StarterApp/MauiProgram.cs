@@ -64,6 +64,17 @@ public static class MauiProgram
             builder.Services.AddSingleton<IRentalService, RentalService>();
         }
 
+        //review
+        if (useSharedApi)
+        {
+            builder.Services.AddSingleton<IReviewService, ApiReviewService>();
+        }
+        else
+        {
+            builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
+            builder.Services.AddSingleton<IReviewService, ReviewService>();
+        }
+
         builder.Services.AddSingleton<INavigationService, NavigationService>();
 
         builder.Services.AddSingleton<AppShellViewModel>();
