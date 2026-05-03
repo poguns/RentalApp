@@ -39,6 +39,7 @@ public class AppDbContext : DbContext
     public DbSet<UserRole> UserRoles { get; set; }
     public DbSet<Item> Items { get; set; }
     public DbSet<Rental> Rentals { get; set; }
+    public DbSet<Review> Reviews { get; set; }
 
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -107,6 +108,26 @@ public class AppDbContext : DbContext
             entity.HasOne(r => r.Borrower)
                 .WithMany()
                 .HasForeignKey(r => r.BorrowerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasIndex(e => e.ItemId);
+            entity.HasIndex(e => e.ReviewerId);
+            entity.Property(e => e.Comment).HasMaxLength(1000);
+
+            //each user gets one review per item
+            entity.HasIndex(e => new { e.ItemId, e.ReviewerId }).IsUnique();
+
+            entity.HasOne(r => r.Item)
+                .WithMany()
+                .HasForeignKey(r => r.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Reviewer)
+                .WithMany()
+                .HasForeignKey(r => r.ReviewerId)
                 .OnDelete(DeleteBehavior.Restrict);
         });
     }
