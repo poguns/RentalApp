@@ -4,7 +4,7 @@ on:
   pull_request:
     branches: [ master ]
   push: #push test
-    branches: [ feature/review ]
+    branches: [ feature/RentalStatus ]
 
 jobs:
   build:
