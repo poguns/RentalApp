@@ -67,6 +67,22 @@ public class ApiRentalService : IRentalService
         response.EnsureSuccessStatusCode();
     }
 
+    public async Task MarkOutForRentAsync(int rentalId)
+    {
+        var response = await _httpClient
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", 
+                new { status = RentalStatus.OutForRent });
+        response.EnsureSuccessStatusCode();
+    }
+
+    public async Task CompleteRentalAsync(int rentalId)
+    {
+        var response = await _httpClient
+            .PatchAsJsonAsync($"rentals/{rentalId}/status",
+                new { status = RentalStatus.Completed });
+        response.EnsureSuccessStatusCode();
+    }
+
     private static Rental MapToRental(ApiRentalResponse r) => new Rental
     {
         Id = r.Id,
