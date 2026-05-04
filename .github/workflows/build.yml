@@ -3,8 +3,8 @@ name: Build & Test
 on:
   pull_request:
     branches: [ master ]
-  push: #push test
-    branches: [ feature/RentalStatus ]
+  push:
+    branches: [ feature/Location ]
 
 jobs:
   build:
