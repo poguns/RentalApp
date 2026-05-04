@@ -49,21 +49,21 @@ public class ApiRentalService : IRentalService
     public async Task ApproveRental(int rentalId)
     {
         var response = await _httpClient
-            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Approved" });
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = RentalStatus.Approved });
         response.EnsureSuccessStatusCode();
     }
 
     public async Task RejectRental(int rentalId)
     {
         var response = await _httpClient
-            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Rejected" });
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = RentalStatus.Rejected });
         response.EnsureSuccessStatusCode();
     }
 
     public async Task ReturnRental(int rentalId)
     {
         var response = await _httpClient
-            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = "Returned" });
+            .PatchAsJsonAsync($"rentals/{rentalId}/status", new { status = RentalStatus.Returned });
         response.EnsureSuccessStatusCode();
     }
 

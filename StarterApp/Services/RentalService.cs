@@ -21,7 +21,7 @@ public class RentalService : IRentalService
         // Check for date overlaps with existing approved rentals
         var existingRentals = await _rentalRepository.GetByItemIdAsync(itemId);
         return !existingRentals.Any(r =>
-            r.Status == "Approved" &&
+            r.Status == RentalStatus.Approved &&
             r.StartDate < endDate &&
             r.EndDate > startDate);
     }
@@ -46,7 +46,7 @@ public class RentalService : IRentalService
             BorrowerId = borrowerId,
             StartDate = startDate,
             EndDate = endDate,
-            Status = "Pending",
+            Status = RentalStatus.Pending,
             CreatedAt = DateTime.UtcNow
         };
 

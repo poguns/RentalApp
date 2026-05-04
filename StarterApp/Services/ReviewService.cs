@@ -38,7 +38,7 @@ public class ReviewService : IReviewService
         var rentals = await _rentalRepository.GetByBorrowerIdAsync(currentUserId);
         var hasRentedItem = rentals.Any(r =>
             r.ItemId == itemId &&
-            r.Status == "Returned");
+            r.Status == RentalStatus.Completed);
 
         return hasRentedItem;
     }

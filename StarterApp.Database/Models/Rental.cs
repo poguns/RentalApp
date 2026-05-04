@@ -27,7 +27,7 @@ public class Rental
     public DateTime EndDate { get; set; }
 
     [MaxLength(50)]
-    public string Status { get; set; } = "Pending";
+    public string Status { get; set; } = RentalStatus.Pending;
 
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
 
