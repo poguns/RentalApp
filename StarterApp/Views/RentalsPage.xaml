@@ -110,6 +110,14 @@
                                         CommandParameter="{Binding .}"
                                         IsVisible="{Binding Status, Converter={StaticResource StringEqualsConverter}, ConverterParameter='Pending'}" />
 
+                                <Button Text="Mark Collected"
+                                        BackgroundColor="#FF9800"
+                                        TextColor="White"
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RentalsViewModel}}, Path=MarkOutForRentCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsVisible="{Binding Status, Converter={StaticResource StringEqualsConverter}, ConverterParameter='Approved'}" />
+
                                 <!-- Return — for outgoing approved rentals -->
                                 <Button Text="Mark Returned"
                                         BackgroundColor="#512BD4"
@@ -118,6 +126,14 @@
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RentalsViewModel}}, Path=ReturnRentalCommand}"
                                         CommandParameter="{Binding .}"
                                         IsVisible="{Binding Status, Converter={StaticResource StringEqualsConverter}, ConverterParameter='Approved'}" />
+
+                                <Button Text="Complete"
+                                        BackgroundColor="#2196F3"
+                                        TextColor="White"
+                                        FontSize="12"
+                                        Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RentalsViewModel}}, Path=CompleteRentalCommand}"
+                                        CommandParameter="{Binding .}"
+                                        IsVisible="{Binding Status, Converter={StaticResource StringEqualsConverter}, ConverterParameter='Returned'}" />
 
                             </HorizontalStackLayout>
 

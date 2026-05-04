@@ -143,4 +143,60 @@ public partial class RentalsViewModel : BaseViewModel
             IsBusy = false;
         }
     }
+
+    [RelayCommand]
+    private async Task MarkOutForRentAsync(Rental rental)
+    {
+        var confirm = await Shell.Current.DisplayAlert(
+            "Mark as Out for Rent",
+            $"Confirm '{rental.Item?.Title}' has been collected?",
+            "Confirm",
+            "Cancel"
+        );
+
+        if (!confirm) return;
+
+        try
+        {
+            IsBusy = true;
+            await _rentalService.MarkOutForRentAsync(rental.Id);
+            await LoadRentalsAsync();
+        }
+        catch (Exception ex)
+        {
+            SetError($"Failed to update rental: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
+
+    [RelayCommand]
+    private async Task CompleteRentalAsync(Rental rental)
+    {
+        var confirm = await Shell.Current.DisplayAlert(
+            "Complete Rental",
+            $"Mark '{rental.Item?.Title}' rental as completed?",
+            "Confirm",
+            "Cancel"
+        );
+
+        if (!confirm) return;
+
+        try
+        {
+            IsBusy = true;
+            await _rentalService.CompleteRentalAsync(rental.Id);
+            await LoadRentalsAsync();
+        }
+        catch (Exception ex)
+        {
+            SetError($"Failed to complete rental: {ex.Message}");
+        }
+        finally
+        {
+            IsBusy = false;
+        }
+    }
 }
