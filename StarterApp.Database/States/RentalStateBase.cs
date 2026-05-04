@@ -22,6 +22,10 @@ public abstract class RentalStateBase : IRentalState
         throw new InvalidOperationException(
             $"Cannot mark as returned in '{StateName}' state.");
 
+    public virtual IRentalState MarkOverdue(Rental rental) =>
+    throw new InvalidOperationException(
+        $"Cannot mark as overdue in '{StateName}' state.");
+
     public virtual IRentalState Complete(Rental rental) =>
         throw new InvalidOperationException(
             $"Cannot complete a rental in '{StateName}' state.");

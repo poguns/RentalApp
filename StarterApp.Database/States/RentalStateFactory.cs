@@ -13,6 +13,7 @@ public static class RentalStateFactory
         RentalStatus.Approved   => new ApprovedState(),
         RentalStatus.OutForRent => new OutForRentState(),
         RentalStatus.Returned   => new ReturnedState(),
+        RentalStatus.Overdue => new OverdueState(),
         RentalStatus.Completed  => new CompletedState(),
         RentalStatus.Rejected   => new RejectedState(),
         _ => throw new ArgumentException($"Unknown rental status: {status}")

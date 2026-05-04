@@ -111,6 +111,8 @@ public static class MauiProgram
         builder.Services.AddTransient<ReviewsPage>();
         //location
         builder.Services.AddSingleton<ILocationService, LocationService>();
+        //overdue
+        builder.Services.AddSingleton<OverdueService>();
 
 
 

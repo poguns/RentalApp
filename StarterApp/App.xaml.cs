@@ -48,6 +48,15 @@ public partial class App : Application
 		return window;
 	}
 
+	protected override async void OnResume()
+	{
+		base.OnResume();
+		var overdueService = Handler.MauiContext.Services
+			.GetService<OverdueService>();
+		if (overdueService != null)
+			await overdueService.CheckForOverdueRentalsAsync();
+	}
+
 	private async Task RestoreSessionAsync()
     {
         // Small delay so the shell/navigation stack fully initialise

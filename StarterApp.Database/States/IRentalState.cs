@@ -10,4 +10,5 @@ public interface IRentalState
     IRentalState MarkOutForRent(Rental rental);
     IRentalState MarkReturned(Rental rental);
     IRentalState Complete(Rental rental);
+    IRentalState MarkOverdue(Rental rental);
 }

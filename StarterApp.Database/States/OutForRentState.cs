@@ -16,4 +16,15 @@ public class OutForRentState : RentalStateBase
         rental.UpdatedAt = DateTime.UtcNow;
         return new ReturnedState();
     }
+
+    public override IRentalState MarkOverdue(Rental rental)
+    {
+        if (rental.EndDate.Date >= DateTime.Today)
+            throw new InvalidOperationException(
+                "Cannot mark as overdue before the end date has passed.");
+ 
+        rental.Status = RentalStatus.Overdue;
+        rental.UpdatedAt = DateTime.UtcNow;
+        return new OverdueState();
+    }
 }
