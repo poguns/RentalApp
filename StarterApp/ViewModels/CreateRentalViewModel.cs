@@ -156,6 +156,8 @@ public partial class CreateRentalViewModel : BaseViewModel
     [RelayCommand]
     private async Task CancelAsync()
     {
-        await Shell.Current.GoToAsync("..");
-    }
+        if (Shell.Current != null)
+            await Shell.Current.GoToAsync("..");
+        else
+            await Application.Current.MainPage.Navigation.PopAsync();    }
 }

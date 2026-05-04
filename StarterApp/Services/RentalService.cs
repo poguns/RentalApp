@@ -1,5 +1,6 @@
 using StarterApp.Database.Models;
 using StarterApp.Database.Data.Repositories;
+using StarterApp.Database.States;
 
 namespace StarterApp.Services;
 
@@ -72,19 +73,14 @@ public class RentalService : IRentalService
         var rental = await _rentalRepository.GetByIdAsync(rentalId)
             ?? throw new InvalidOperationException("Rental not found");
 
-        //rental status
-        if (!RentalStatus.CanTransitionTo(rental.Status, RentalStatus.Approved))
-            throw new InvalidOperationException(
-                $"Cannot approve a rental with status: {rental.Status}");
-
-        // Only the item owner can approve
         var currentUserId = _authService.CurrentUser?.Id
             ?? throw new InvalidOperationException("Not authenticated");
 
         if (rental.Item?.OwnerId != currentUserId)
             throw new UnauthorizedAccessException("Only the item owner can approve rentals");
 
-        rental.Status = RentalStatus.Approved;
+        var state = RentalStateFactory.GetState(rental.Status);
+        state.Approve(rental);
         await _rentalRepository.UpdateAsync(rental);
     }
 
@@ -93,17 +89,14 @@ public class RentalService : IRentalService
         var rental = await _rentalRepository.GetByIdAsync(rentalId)
             ?? throw new InvalidOperationException("Rental not found");
 
-        if (!RentalStatus.CanTransitionTo(rental.Status, RentalStatus.Rejected))
-            throw new InvalidOperationException(
-                $"Cannot reject a rental with status: {rental.Status}");
-
         var currentUserId = _authService.CurrentUser?.Id
             ?? throw new InvalidOperationException("Not authenticated");
 
         if (rental.Item?.OwnerId != currentUserId)
             throw new UnauthorizedAccessException("Only the item owner can reject rentals");
 
-        rental.Status = RentalStatus.Rejected;
+        var state = RentalStateFactory.GetState(rental.Status);
+        state.Reject(rental);
         await _rentalRepository.UpdateAsync(rental);
     }
 
@@ -112,7 +105,8 @@ public class RentalService : IRentalService
         var rental = await _rentalRepository.GetByIdAsync(rentalId)
             ?? throw new InvalidOperationException("Rental not found");
 
-        rental.Status = RentalStatus.Returned;
+        var state = RentalStateFactory.GetState(rental.Status);
+        state.MarkReturned(rental);
         await _rentalRepository.UpdateAsync(rental);
     }
 
@@ -121,15 +115,8 @@ public class RentalService : IRentalService
         var rental = await _rentalRepository.GetByIdAsync(rentalId)
             ?? throw new InvalidOperationException("Rental not found");
 
-        if (!RentalStatus.CanTransitionTo(rental.Status, RentalStatus.OutForRent))
-            throw new InvalidOperationException(
-                $"Cannot mark as out for rent with status: {rental.Status}");
-
-        if (rental.StartDate.Date > DateTime.Today)
-            throw new InvalidOperationException(
-                "Cannot mark as out for rent before the start date");
-
-        rental.Status = RentalStatus.OutForRent;
+        var state = RentalStateFactory.GetState(rental.Status);
+        state.MarkOutForRent(rental);
         await _rentalRepository.UpdateAsync(rental);
     }
 
@@ -138,11 +125,8 @@ public class RentalService : IRentalService
         var rental = await _rentalRepository.GetByIdAsync(rentalId)
             ?? throw new InvalidOperationException("Rental not found");
 
-        if (!RentalStatus.CanTransitionTo(rental.Status, RentalStatus.Completed))
-            throw new InvalidOperationException(
-                $"Cannot complete a rental with status: {rental.Status}");
-
-        rental.Status = RentalStatus.Completed;
+        var state = RentalStateFactory.GetState(rental.Status);
+        state.Complete(rental);
         await _rentalRepository.UpdateAsync(rental);
     }
 }

@@ -1,5 +1,7 @@
 using System.Net.Http.Json;
 using StarterApp.Database.Models;
+using StarterApp.Database.States;
+
 
 namespace StarterApp.Services;
 
@@ -41,9 +43,14 @@ public class ApiRentalService : IRentalService
             itemId, startDate, endDate
         });
 
-        response.EnsureSuccessStatusCode();
-        var created = await response.Content.ReadFromJsonAsync<ApiRentalResponse>();
-        return MapToRental(created!);
+        if (!response.IsSuccessStatusCode)
+    {
+        var error = await response.Content.ReadFromJsonAsync<ApiErrorResponse>();
+        throw new Exception(error?.Message ?? $"Request failed: {response.StatusCode}");
+    }
+
+    var created = await response.Content.ReadFromJsonAsync<ApiRentalResponse>();
+    return MapToRental(created!);
     }
 
     public async Task ApproveRental(int rentalId)
@@ -119,4 +126,5 @@ public class ApiRentalService : IRentalService
 
     private record ApiItemSummary(int Id, string Title, decimal DailyRate, int OwnerId);
     private record AvailabilityResponse(bool Available);
+    private record ApiErrorResponse(string Error, string Message);
 }
