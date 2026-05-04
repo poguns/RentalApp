@@ -9,6 +9,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\StarterApp.Database\StarterApp.Database.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="coverlet.collector" Version="10.0.0">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
@@ -24,8 +28,9 @@
     <Using Include="Xunit" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\StarterApp.Database\StarterApp.Database.csproj" />
-  </ItemGroup>
 
+<ItemGroup>
+  <Compile Remove="Services/StarterAppServices/Services/LocationService.cs" />
+  <Compile Remove="Services/StarterAppServices/Services/ILocationService.cs" />
+</ItemGroup>
 </Project>
