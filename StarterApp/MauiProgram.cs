@@ -109,6 +109,9 @@ public static class MauiProgram
         builder.Services.AddScoped<IReviewRepository, ReviewRepository>();
         builder.Services.AddTransient<ReviewsViewModel>();
         builder.Services.AddTransient<ReviewsPage>();
+        //location
+        builder.Services.AddSingleton<ILocationService, LocationService>();
+
 
 
 #if DEBUG
