@@ -6,6 +6,28 @@
     xmlns:views="clr-namespace:StarterApp.Views"
     Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent ContentTemplate="{DataTemplate views:LoginPage}" />
+    <!-- auth pages, no tab bar shown before login -->
+    <ShellContent x:Name="LoginPage" Route="LoginPage" ContentTemplate="{DataTemplate views:LoginPage}"
+        Shell.TabBarIsVisible="False" />
+
+    <ShellContent x:Name="RegisterPage" Route="RegisterPage" ContentTemplate="{DataTemplate views:RegisterPage}"
+        Shell.TabBarIsVisible="False" />
+
+    <!-- main app, tab bar shows after login -->
+    <TabBar x:Name="MainTabBar">
+        <Tab Title="Items" Icon="dotnet_bot.png">
+            <ShellContent Route="ItemsListPage" ContentTemplate="{DataTemplate views:ItemsListPage}" />
+        </Tab>
+
+        <Tab Title="Rentals">
+            <ShellContent
+                Route="RentalsPage"
+                ContentTemplate="{DataTemplate views:RentalsPage}" />
+        </Tab>
+
+        <Tab Title="Profile" Icon="dotnet_bot.png">
+            <ShellContent Route="MainPage" ContentTemplate="{DataTemplate views:MainPage}" />
+        </Tab>
+    </TabBar>
 
 </Shell>

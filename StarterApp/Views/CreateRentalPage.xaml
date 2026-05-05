@@ -1,0 +1,90 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:Class="StarterApp.Views.CreateRentalPage"
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             x:DataType="viewmodels:CreateRentalViewModel"
+             Title="{Binding Title}">
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <!-- Item summary card -->
+            <Border Padding="16" StrokeShape="RoundRectangle 8">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="{Binding Item.Title}"
+                           FontSize="18"
+                           FontAttributes="Bold" />
+                    <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}"
+                           TextColor="Green"
+                           FontSize="14" />
+                    <Label Text="{Binding Item.Location}"
+                           TextColor="Gray"
+                           FontSize="13" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Date selection -->
+            <Label Text="Start Date" FontAttributes="Bold" />
+            <DatePicker Date="{Binding StartDate}"
+                        MinimumDate="{x:Static sys:DateTime.Today}" />
+
+            <Label Text="End Date" FontAttributes="Bold" />
+            <DatePicker Date="{Binding EndDate}"
+                        MinimumDate="{x:Static sys:DateTime.Today}" />
+
+            <!-- Cost preview -->
+            <Border Padding="16" StrokeShape="RoundRectangle 8"
+                    BackgroundColor="#F5F5F5">
+                <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto">
+                    <Label Grid.Row="0" Grid.Column="0" Text="Duration" TextColor="Gray" />
+                    <Label Grid.Row="0" Grid.Column="1"
+                           Text="{Binding TotalDays, StringFormat='{0} days'}"
+                           HorizontalOptions="End"
+                           FontAttributes="Bold" />
+                    <Label Grid.Row="1" Grid.Column="0" Text="Total Cost" TextColor="Gray" />
+                    <Label Grid.Row="1" Grid.Column="1"
+                           Text="{Binding TotalCost, StringFormat='£{0:F2}'}"
+                           HorizontalOptions="End"
+                           FontAttributes="Bold"
+                           TextColor="Green" />
+                </Grid>
+            </Border>
+
+            <!-- Availability check -->
+            <Button Text="Check Availability"
+                    Command="{Binding CheckAvailabilityCommand}"
+                    BackgroundColor="#E3F2FD"
+                    TextColor="#1565C0" />
+
+            <Label Text="{Binding AvailabilityMessage}"
+                   IsVisible="{Binding AvailabilityMessage,
+                               Converter={StaticResource StringToBoolConverter}}"
+                   HorizontalOptions="Center" />
+
+            <!-- Error message -->
+            <Label Text="{Binding ErrorMessage}"
+                   IsVisible="{Binding HasError}"
+                   TextColor="Red" />
+
+            <!-- Submit -->
+            <Button Text="Submit Rental Request"
+                    Command="{Binding SubmitRequestCommand}"
+                    IsEnabled="{Binding IsBusy,
+                                Converter={StaticResource InvertedBoolConverter}}"
+                    BackgroundColor="#512BD4"
+                    TextColor="White" />
+
+            <Button Text="Cancel"
+                    Command="{Binding CancelCommand}"
+                    BackgroundColor="Gray"
+                    TextColor="White" />
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}"
+                               IsVisible="{Binding IsBusy}" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

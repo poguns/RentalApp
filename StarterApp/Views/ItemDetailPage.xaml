@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:viewmodels="clr-namespace:StarterApp.ViewModels"
+             x:Class="StarterApp.Views.ItemDetailPage"
+             x:DataType="viewmodels:ItemDetailViewModel"
+             Title="{Binding Item.Title}">
+
+    <ContentPage.ToolbarItems>
+        <!-- Only show Edit/Delete if current user is the owner -->
+        <ToolbarItem Text="Edit"
+                     Command="{Binding GoToEditCommand}"
+                     IsEnabled="{Binding IsOwner}" />
+    </ContentPage.ToolbarItems>
+
+    <ScrollView>
+        <VerticalStackLayout Padding="16" Spacing="16">
+
+            <Label Text="{Binding Item.Title}"
+                   FontSize="24"
+                   FontAttributes="Bold" />
+
+            <HorizontalStackLayout Spacing="8">
+                <Label Text="{Binding Item.Category}"
+                       TextColor="Gray" />
+                <Label Text="•" TextColor="Gray" />
+                <Label Text="{Binding Item.Location}"
+                       TextColor="Gray" />
+            </HorizontalStackLayout>
+
+            <Label Text="{Binding Item.DailyRate, StringFormat='£{0:F2} per day'}"
+                   FontSize="20"
+                   FontAttributes="Bold"
+                   TextColor="Green" />
+
+            <BoxView HeightRequest="1" Color="LightGray" />
+
+            <Label Text="Description"
+                   FontAttributes="Bold"
+                   FontSize="16" />
+
+            <Label Text="{Binding Item.Description}"
+                   FontSize="14" />
+
+            <Label Text="{Binding Item.Owner.FirstName, StringFormat='Listed by {0}'}"
+                   TextColor="Gray"
+                   FontSize="12" />
+
+              <Button Text="Request Rental"
+                     Command="{Binding GoToRentItemCommand}"
+                     BackgroundColor="#512BD4"
+                     TextColor="White"
+                     IsVisible="{Binding IsOwner,
+                            Converter={StaticResource InvertedBoolConverter}}" />
+              
+              <Button Text="{Binding AverageRating,
+                            StringFormat='See Reviews ({0:F1}★)'}"
+                     Command="{Binding GoToReviewsCommand}"
+                     BackgroundColor="#E3F2FD"
+                     TextColor="#1565C0" />
+
+            <!-- Delete button — owner only -->
+            <Button Text="Delete Item"
+                    Command="{Binding DeleteItemCommand}"
+                    IsVisible="{Binding IsOwner}"
+                    BackgroundColor="Red"
+                    TextColor="White"
+                    Margin="0,16,0,0" />
+
+        </VerticalStackLayout>
+    </ScrollView>
+
+</ContentPage>

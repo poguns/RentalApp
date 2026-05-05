@@ -37,6 +37,10 @@ public class AppDbContext : DbContext
     public DbSet<Role> Roles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<UserRole> UserRoles { get; set; }
+    public DbSet<Item> Items { get; set; }
+    public DbSet<Rental> Rentals { get; set; }
+    public DbSet<Review> Reviews { get; set; }
+
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -73,6 +77,58 @@ public class AppDbContext : DbContext
             entity.HasOne(ur => ur.Role)
                   .WithMany(r => r.UserRoles)
                   .HasForeignKey(ur => ur.RoleId);
+        });
+
+        modelBuilder.Entity<Item>(entity =>
+        {
+            entity.HasIndex(e => e.OwnerId);
+            entity.Property(e => e.Title).HasMaxLength(200);
+            entity.Property(e => e.Description).HasMaxLength(2000);
+            entity.Property(e => e.Category).HasMaxLength(100);
+            entity.Property(e => e.Location).HasMaxLength(200);
+            entity.Property(e => e.DailyRate).HasColumnType("decimal(10,2)");
+
+            entity.HasOne(i => i.Owner)
+                .WithMany()
+                .HasForeignKey(i => i.OwnerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Rental>(entity =>
+        {
+            entity.HasIndex(e => e.ItemId);
+            entity.HasIndex(e => e.BorrowerId);
+            entity.Property(e => e.Status).HasMaxLength(50);
+
+            entity.HasOne(r => r.Item)
+                .WithMany()
+                .HasForeignKey(r => r.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Borrower)
+                .WithMany()
+                .HasForeignKey(r => r.BorrowerId)
+                .OnDelete(DeleteBehavior.Restrict);
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasIndex(e => e.ItemId);
+            entity.HasIndex(e => e.ReviewerId);
+            entity.Property(e => e.Comment).HasMaxLength(1000);
+
+            //each user gets one review per item
+            entity.HasIndex(e => new { e.ItemId, e.ReviewerId }).IsUnique();
+
+            entity.HasOne(r => r.Item)
+                .WithMany()
+                .HasForeignKey(r => r.ItemId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            entity.HasOne(r => r.Reviewer)
+                .WithMany()
+                .HasForeignKey(r => r.ReviewerId)
+                .OnDelete(DeleteBehavior.Restrict);
         });
     }
 

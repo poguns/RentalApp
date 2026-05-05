@@ -1,5 +1,5 @@
 {
   "ConnectionStrings": {
-    "DevelopmentConnection": "Host=YOUR_DATABASE_HOST;Port=5432;Database=YOUR_DATABASE_NAME;Username=DATABASE_USER;Password=DATABASE_USER_PASSWORD"
+    "DevelopmentConnection": "Host=10.0.2.2;Port=5432;Database=appdb;Username=app_user;Password=app_password"
   }
 }

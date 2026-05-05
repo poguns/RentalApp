@@ -1,0 +1,38 @@
+Summary
+  Generated on: 5/4/2026 - 2:11:31 PM
+  Coverage date: 5/4/2026 - 1:51:42 PM - 5/4/2026 - 2:09:46 PM
+  Parser: MultiReport (4x Cobertura)
+  Assemblies: 1
+  Classes: 16
+  Files: 19
+  Line coverage: 16.5%
+  Covered lines: 271
+  Uncovered lines: 1363
+  Coverable lines: 1634
+  Total lines: 2133
+  Branch coverage: 15% (6 of 40)
+  Covered branches: 6
+  Total branches: 40
+  Method coverage: 60% (69 of 115)
+  Full method coverage: 59.1% (68 of 115)
+  Covered methods: 69
+  Fully covered methods: 68
+  Total methods: 115
+
+StarterApp.Database                                          16.5%
+  StarterApp.Database.Data.AppDbContext                      87.3%
+  StarterApp.Database.Data.Repositories.ItemRepository        100%
+  StarterApp.Database.Data.Repositories.RentalRepository     60.3%
+  StarterApp.Database.Data.Repositories.ReviewRepository      100%
+  StarterApp.Database.Migrations.AddItemTable                   0%
+  StarterApp.Database.Migrations.AddReviewTable                 0%
+  StarterApp.Database.Migrations.AppDbContextModelSnapshot      0%
+  StarterApp.Database.Migrations.InitialCreate                  0%
+  StarterApp.Database.Models.Item                            90.9%
+  StarterApp.Database.Models.Rental                            75%
+  StarterApp.Database.Models.RentalStatus                     100%
+  StarterApp.Database.Models.Review                          66.6%
+  StarterApp.Database.Models.Role                               0%
+  StarterApp.Database.Models.RoleConstants                      0%
+  StarterApp.Database.Models.User                            83.3%
+  StarterApp.Database.Models.UserRole                           0%

@@ -1,0 +1,59 @@
+name: Build & Test
+
+on:
+  pull_request:
+    branches: [ master ]
+  push:
+    branches: [ fixes ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgis/postgis:16-3.4
+        env:
+          POSTGRES_USER: test_user
+          POSTGRES_PASSWORD: test_password
+          POSTGRES_DB: test_db
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '10.0.x'
+
+      - name: Restore dependencies
+        run: |
+          dotnet restore ./StarterApp.Database/StarterApp.Database.csproj
+          dotnet restore ./StarterApp.Migrations/StarterApp.Migrations.csproj
+
+      - name: Build
+        run: |
+          dotnet build ./StarterApp.Database/StarterApp.Database.csproj --configuration Release --no-restore
+          dotnet build ./StarterApp.Migrations/StarterApp.Migrations.csproj --configuration Release --no-restore
+
+      - name: Run migrations
+        env:
+          CONNECTION_STRING: "Host=localhost;Port=5432;Username=test_user;Password=test_password;Database=test_db"
+        run: dotnet run --project ./StarterApp.Migrations/StarterApp.Migrations.csproj
+
+      - name: Run tests
+        env:
+          CONNECTION_STRING: "Host=localhost;Port=5432;Username=test_user;Password=test_password;Database=test_db"
+        run: dotnet test ./StarterApp.Database/StarterApp.Database.csproj --configuration Release --verbosity normal --collect:"XPlat Code Coverage"
+      - name: Upload coverage reports
+        uses: codecov/codecov-action@v3
+        with:
+          files: '**/coverage.cobertura.xml'

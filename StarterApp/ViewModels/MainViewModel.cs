@@ -85,7 +85,7 @@ public partial class MainViewModel : BaseViewModel
         if (result)
         {
             await _authService.LogoutAsync();
-            await _navigationService.NavigateToAsync("LoginPage");
+            await _navigationService.NavigateToRootAsync();
         }
     }
 
