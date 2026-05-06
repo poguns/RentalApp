@@ -75,6 +75,12 @@ public partial class CreateEditItemViewModel : BaseViewModel
             return;
         }
 
+        if (ItemTitle.Length < 5)
+        {
+            SetError("Title must be at least 5 characters");
+            return;
+        }
+
         try
         {
             IsBusy = true;
@@ -87,14 +93,18 @@ public partial class CreateEditItemViewModel : BaseViewModel
                 Item.Category = Category;
                 Item.Location = Location;
                 await _itemService.UpdateItemAsync(Item);
+                await Shell.Current.DisplayAlert("Success", "Item updated successfully", "OK");
+                await Shell.Current.GoToAsync("//ItemsListPage");
             }
             else
             {
                 await _itemService.CreateItemAsync(
                     ItemTitle, Description, DailyRate, Category, Location);
+                    await Shell.Current.DisplayAlert("Success", "Item created successfully", "OK");
+                    await Shell.Current.GoToAsync("//ItemsListPage");
             }
 
-            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync("//ItemsListPage");
         }
         catch (Exception ex)
         {
@@ -109,6 +119,6 @@ public partial class CreateEditItemViewModel : BaseViewModel
     [RelayCommand]
     private async Task CancelAsync()
     {
-        await Shell.Current.GoToAsync("..");
+        await Shell.Current.GoToAsync("//ItemsListPage");
     }
 }

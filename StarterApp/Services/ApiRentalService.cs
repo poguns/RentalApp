@@ -23,24 +23,26 @@ public class ApiRentalService : IRentalService
 
     public async Task<List<Rental>> GetOutgoingRentalsAsync()
     {
+         var raw = await _httpClient.GetStringAsync("rentals/outgoing");
+        System.Diagnostics.Debug.WriteLine($"OUTGOING RENTALS: {raw}");
+
         var response = await _httpClient
             .GetFromJsonAsync<ApiRentalWrapper>("rentals/outgoing");
         return response?.Rentals?.Select(MapToRental).ToList() ?? new List<Rental>();
     }
 
-    public async Task<bool> CanRentItem(int itemId, DateTime startDate, DateTime endDate)
+    public Task<bool> CanRentItem(int itemId, DateTime startDate, DateTime endDate)
     {
-        var response = await _httpClient.GetFromJsonAsync<AvailabilityResponse>(
-            $"items/{itemId}/availability?startDate={startDate:O}&endDate={endDate:O}");
-        return response?.Available ?? false;
+        return Task.FromResult(true);
     }
 
-    public async Task<Rental> RequestRental(int itemId, int borrowerId,
-                                             DateTime startDate, DateTime endDate)
+    public async Task<Rental> RequestRental(int itemId, int borrowerId, DateTime startDate, DateTime endDate)
     {
         var response = await _httpClient.PostAsJsonAsync("rentals", new
         {
-            itemId, startDate, endDate
+            itemId, 
+            startDate = startDate.ToString("yyyy-MM-dd"), 
+            endDate = endDate.ToString("yyyy-MM-dd")
         });
 
         if (!response.IsSuccessStatusCode)

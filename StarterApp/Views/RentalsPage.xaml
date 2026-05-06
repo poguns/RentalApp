@@ -20,18 +20,16 @@
                     BackgroundColor="{Binding ShowingIncoming, 
                         Converter={StaticResource BoolToColorConverter},
                         ConverterParameter='#512BD4|#E0E0E0'}"
-                    TextColor="{Binding ShowingIncoming,
-                        Converter={StaticResource BoolToColorConverter},
-                        ConverterParameter='White|Black'}" />
+                    TextColor="White"
+                    FontAttributes="Bold" />
 
             <Button Text="Outgoing"
                     Command="{Binding ShowOutgoingCommand}"
                     BackgroundColor="{Binding ShowingIncoming,
                         Converter={StaticResource BoolToColorConverter},
                         ConverterParameter='#E0E0E0|#512BD4'}"
-                    TextColor="{Binding ShowingIncoming,
-                        Converter={StaticResource BoolToColorConverter},
-                        ConverterParameter='Black|White'}" />
+                    TextColor="White"
+                    FontAttributes="Bold" />
 
         </HorizontalStackLayout>
 

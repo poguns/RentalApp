@@ -11,7 +11,7 @@
         <VerticalStackLayout Padding="16" Spacing="12">
 
             <Label Text="Title" FontAttributes="Bold" />
-            <Entry Text="{Binding Title}"
+            <Entry Text="{Binding ItemTitle}"
                    Placeholder="What are you lending?" />
 
             <Label Text="Description" FontAttributes="Bold" />
@@ -24,9 +24,23 @@
                    Placeholder="0.00"
                    Keyboard="Numeric" />
 
-            <Label Text="Category" FontAttributes="Bold" />
-            <Entry Text="{Binding Category}"
-                   Placeholder="e.g. Tools, Sports, Electronics" />
+              <Label Text="Category" FontAttributes="Bold" />
+              <Picker x:Name="CategoryPicker"
+                     Title="Select a category"
+                     SelectedItem="{Binding Category}">
+                     <Picker.Items>
+                            <x:String>Tools</x:String>
+                            <x:String>Garden</x:String>
+                            <x:String>Camping</x:String>
+                            <x:String>Sports</x:String>
+                            <x:String>Electronics</x:String>
+                            <x:String>Games</x:String>
+                            <x:String>DIY</x:String>
+                            <x:String>Cycling</x:String>
+                            <x:String>Music</x:String>
+                            <x:String>Outdoors</x:String>
+                     </Picker.Items>
+              </Picker>
 
             <Label Text="Location" FontAttributes="Bold" />
             <Entry Text="{Binding Location}"

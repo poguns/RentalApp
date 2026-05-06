@@ -50,8 +50,7 @@
                      Command="{Binding GoToRentItemCommand}"
                      BackgroundColor="#512BD4"
                      TextColor="White"
-                     IsVisible="{Binding IsOwner,
-                            Converter={StaticResource InvertedBoolConverter}}" />
+                     IsVisible="{Binding IsOwner, Converter={StaticResource InvertedBoolConverter}}" />
               
               <Button Text="{Binding AverageRating,
                             StringFormat='See Reviews ({0:F1}★)'}"

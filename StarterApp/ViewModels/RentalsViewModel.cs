@@ -9,6 +9,7 @@ namespace StarterApp.ViewModels;
 public partial class RentalsViewModel : BaseViewModel
 {
     private readonly IRentalService _rentalService;
+    private readonly IItemService _itemService;
 
     [ObservableProperty]
     private ObservableCollection<Rental> _incomingRentals = new();
@@ -23,9 +24,10 @@ public partial class RentalsViewModel : BaseViewModel
     [ObservableProperty]
     private ObservableCollection<Rental> _currentRentals = new();
 
-    public RentalsViewModel(IRentalService rentalService)
+    public RentalsViewModel(IRentalService rentalService, IItemService itemService)
     {
         _rentalService = rentalService;
+        _itemService = itemService;
         Title = "Rentals";
     }
 
@@ -41,6 +43,17 @@ public partial class RentalsViewModel : BaseViewModel
 
             var incoming = await _rentalService.GetIncomingRentalsAsync();
             var outgoing = await _rentalService.GetOutgoingRentalsAsync();
+
+            //fetch item details for each rental so title and daily rate are populated
+            foreach (var rental in incoming.Concat(outgoing))
+            {
+                if (rental.Item == null && rental.ItemId > 0)
+                {
+                    var item = await _itemService.GetItemAsync(rental.ItemId);
+                    if (item != null)
+                        rental.Item = item;
+                }
+            }
 
             IncomingRentals = new ObservableCollection<Rental>(incoming);
             OutgoingRentals = new ObservableCollection<Rental>(outgoing);
