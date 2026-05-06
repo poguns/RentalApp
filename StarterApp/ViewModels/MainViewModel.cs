@@ -20,6 +20,8 @@ public partial class MainViewModel : BaseViewModel
     
     /// @brief Navigation service for managing page navigation
     private readonly INavigationService _navigationService;
+    private readonly IReviewService _reviewService;
+    private readonly IItemService _itemService;
 
     /// @brief The currently authenticated user
     /// @details Observable property containing the current user's information
@@ -36,6 +38,18 @@ public partial class MainViewModel : BaseViewModel
     [ObservableProperty]
     private bool isAdmin;
 
+    [ObservableProperty]
+    private double averageRating;
+ 
+    [ObservableProperty]
+    private string ratingDisplay = string.Empty;
+ 
+    [ObservableProperty]
+    private int totalReviews;
+ 
+    [ObservableProperty]
+    private bool hasRatings;
+
     /// @brief Default constructor for design-time support
     /// @details Sets the title to "Dashboard"
     public MainViewModel()
@@ -48,13 +62,16 @@ public partial class MainViewModel : BaseViewModel
     /// @param authService The authentication service instance
     /// @param navigationService The navigation service instance
     /// @details Sets up the required services, initializes the title, and loads user data
-    public MainViewModel(IAuthenticationService authService, INavigationService navigationService)
+    public MainViewModel(IAuthenticationService authService, INavigationService navigationService, IReviewService reviewService, IItemService itemService)
     {
         _authService = authService;
         _navigationService = navigationService;
+        _reviewService = reviewService;
+        _itemService = itemService;
         Title = "Dashboard";
 
         LoadUserData();
+        _ = LoadRatingsAsync();
     }
 
     /// @brief Loads the current user's data and sets up the dashboard
@@ -121,6 +138,57 @@ public partial class MainViewModel : BaseViewModel
         }
         
         await _navigationService.NavigateToAsync("UserListPage");
+    }
+
+    private async Task LoadRatingsAsync()
+    {
+        if (_authService.CurrentUser == null) return;
+ 
+        try
+        {
+            var myItems = await _itemService.GetMyItemsAsync();
+ 
+            if (!myItems.Any())
+            {
+                RatingDisplay = "No items listed yet";
+                HasRatings = false;
+                return;
+            }
+ 
+            var allRatings = new List<double>();
+ 
+            foreach (var item in myItems)
+            {
+                var avg = await _reviewService.GetAverageRatingAsync(item.Id);
+                if (avg > 0)
+                    allRatings.Add(avg);
+            }
+ 
+            if (allRatings.Any())
+            {
+                AverageRating = Math.Round(allRatings.Average(), 1);
+                TotalReviews = allRatings.Count;
+                RatingDisplay = $"{AverageRating} / 5";
+                HasRatings = true;
+            }
+            else
+            {
+                RatingDisplay = "No reviews yet";
+                HasRatings = false;
+            }
+        }
+        catch
+        {
+            RatingDisplay = "Unable to load ratings";
+            HasRatings = false;
+        }
+    }
+ 
+    [RelayCommand]
+    private async Task RefreshAsync()
+    {
+        LoadUserData();
+        await LoadRatingsAsync();
     }
 
     /// @brief Refreshes the dashboard data

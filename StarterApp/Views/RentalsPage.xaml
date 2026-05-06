@@ -96,7 +96,7 @@
                                 <!-- Approve/Reject — for incoming pending rentals -->
                                 <Button Text="Approve"
                                         BackgroundColor="Green"
-                                        TextColor="White"
+                                        TextColor="Black"
                                         FontSize="12"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RentalsViewModel}}, Path=ApproveRentalCommand}"
                                         CommandParameter="{Binding .}"
@@ -104,7 +104,7 @@
 
                                 <Button Text="Reject"
                                         BackgroundColor="Red"
-                                        TextColor="White"
+                                        TextColor="Black"
                                         FontSize="12"
                                         Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:RentalsViewModel}}, Path=RejectRentalCommand}"
                                         CommandParameter="{Binding .}"
