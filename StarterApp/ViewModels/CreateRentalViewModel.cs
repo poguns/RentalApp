@@ -141,7 +141,7 @@ public partial class CreateRentalViewModel : BaseViewModel
                 "OK"
             );
 
-            await Shell.Current.GoToAsync("..");
+            await Shell.Current.GoToAsync("//ItemsListPage");
         }
         catch (Exception ex)
         {
@@ -156,8 +156,6 @@ public partial class CreateRentalViewModel : BaseViewModel
     [RelayCommand]
     private async Task CancelAsync()
     {
-        if (Shell.Current != null)
-            await Shell.Current.GoToAsync("..");
-        else
-            await Application.Current.MainPage.Navigation.PopAsync();    }
+        await Shell.Current.GoToAsync("//ItemsListPage");
+    }
 }

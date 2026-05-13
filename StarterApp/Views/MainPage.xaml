@@ -81,12 +81,40 @@
                     </StackLayout>
                 </Border>
 
-                <!-- Quick Actions -->
-                <Label Grid.Row="2"
-                       Text="Quick Actions"
-                       FontSize="20"
-                       FontAttributes="Bold"
-                       Margin="0,10,0,10" />
+                <!-- Owner Rating Card -->
+                <Border Grid.Row="2"
+                        BackgroundColor="{AppThemeBinding Light={StaticResource White}, Dark={StaticResource Gray900}}"
+                        Stroke="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                        StrokeThickness="1"
+                        Padding="20">
+                    <Border.StrokeShape>
+                        <RoundRectangle CornerRadius="12" />
+                    </Border.StrokeShape>
+                    <StackLayout Spacing="8">
+                        <Label Text="Owner Rating"
+                               FontSize="16"
+                               FontAttributes="Bold" />
+                        <StackLayout Orientation="Horizontal"
+                                     Spacing="4"
+                                     IsVisible="{Binding HasRatings}">
+                            <Label Text="⭐"
+                                   FontSize="24"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding RatingDisplay}"
+                                   FontSize="24"
+                                   FontAttributes="Bold"
+                                   VerticalOptions="Center" />
+                            <Label Text="{Binding TotalReviews, StringFormat='({0} items rated)'}"
+                                   FontSize="13"
+                                   VerticalOptions="Center"
+                                   TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                        </StackLayout>
+                        <Label Text="{Binding RatingDisplay}"
+                               FontSize="14"
+                               IsVisible="{Binding HasRatings, Converter={StaticResource InvertedBoolConverter}}"
+                               TextColor="{AppThemeBinding Light={StaticResource Gray600}, Dark={StaticResource Gray400}}" />
+                    </StackLayout>
+                </Border>
 
                 <!-- Action Cards -->
                 <StackLayout Grid.Row="3" Spacing="15">

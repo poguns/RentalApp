@@ -12,65 +12,127 @@
                      Command="{Binding GoToCreateItemCommand}" />
     </ContentPage.ToolbarItems>
 
-    <Grid RowDefinitions="*">
+    <RefreshView IsRefreshing="{Binding IsBusy}"
+                 Command="{Binding LoadItemsCommand}">
+        <ScrollView>
+            <VerticalStackLayout>
 
-        <!-- Loading indicator -->
-        <ActivityIndicator IsRunning="{Binding IsBusy}"
-                           IsVisible="{Binding IsBusy}"
-                           HorizontalOptions="Center"
-                           VerticalOptions="Center" />
+                <!-- Loading indicator -->
+                <ActivityIndicator IsRunning="{Binding IsBusy}"
+                                   IsVisible="{Binding IsBusy}"
+                                   HorizontalOptions="Center" />
 
-        <!-- Error message -->
-        <Label Text="{Binding ErrorMessage}"
-               IsVisible="{Binding HasError}"
-               TextColor="Red"
-               HorizontalOptions="Center"
-               VerticalOptions="Center" />
-
-        <!-- Items list -->
-        <CollectionView ItemsSource="{Binding Items}"
-                        IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
-
-            <CollectionView.EmptyView>
-                <Label Text="No items found"
+                <!-- Error message -->
+                <Label Text="{Binding ErrorMessage}"
+                       IsVisible="{Binding HasError}"
+                       TextColor="Red"
                        HorizontalOptions="Center"
-                       VerticalOptions="Center" />
-            </CollectionView.EmptyView>
+                       Margin="16" />
 
-            <CollectionView.ItemTemplate>
-                <DataTemplate x:DataType="models:Item">
-                    <Grid Padding="16,8" ColumnDefinitions="*,Auto">
+                <VerticalStackLayout IsVisible="{Binding IsBusy, Converter={StaticResource InvertedBoolConverter}}">
 
-                        <VerticalStackLayout Grid.Column="0" Spacing="4">
-                            <Label Text="{Binding Title}"
-                                   FontSize="16"
-                                   FontAttributes="Bold" />
-                            <Label Text="{Binding Category}"
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                            <Label Text="{Binding Location}"
-                                   FontSize="12"
-                                   TextColor="Gray" />
-                        </VerticalStackLayout>
-
-                        <Label Grid.Column="1"
-                               Text="{Binding DailyRate, StringFormat='£{0:F2}/day'}"
-                               FontSize="14"
+                    <!-- My Listings Header -->
+                    <Grid Padding="16,12,16,4" ColumnDefinitions="*,Auto">
+                        <Label Grid.Column="0"
+                               Text="My Listings"
+                               FontSize="18"
                                FontAttributes="Bold"
                                VerticalOptions="Center" />
-
-                        <!-- Tap gesture to navigate to detail -->
-                        <Grid.GestureRecognizers>
-                            <TapGestureRecognizer
-                                Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ItemsListViewModel}}, Path=GoToItemDetailCommand}"
-                                CommandParameter="{Binding .}" />
-                        </Grid.GestureRecognizers>
-
+                        <Label Grid.Column="1"
+                               Text="{Binding MyItems.Count, StringFormat='{0} items'}"
+                               FontSize="13"
+                               TextColor="Gray"
+                               VerticalOptions="Center" />
                     </Grid>
-                </DataTemplate>
-            </CollectionView.ItemTemplate>
 
-        </CollectionView>
+                    <!-- My Items List -->
+                    <CollectionView ItemsSource="{Binding MyItems}"
+                                    HeightRequest="180">
+                        <CollectionView.EmptyView>
+                            <Label Text="You haven't listed any items yet"
+                                   HorizontalOptions="Center"
+                                   TextColor="Gray"
+                                   Margin="16" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Item">
+                                <Grid Padding="16,8" ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="16"
+                                               FontAttributes="Bold" />
+                                        <Label Text="{Binding Category}"
+                                               FontSize="12"
+                                               TextColor="Gray" />
+                                        <Label Text="{Binding Location}"
+                                               FontSize="12"
+                                               TextColor="Gray" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding DailyRate, StringFormat='£{0:F2}/day'}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ItemsListViewModel}}, Path=GoToItemDetailCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
 
-    </Grid>
+                    <!-- Divider -->
+                    <BoxView HeightRequest="1"
+                             Color="{AppThemeBinding Light={StaticResource Gray200}, Dark={StaticResource Gray700}}"
+                             Margin="16,8" />
+
+                    <!-- All Items Header -->
+                    <Label Text="All Items"
+                           FontSize="18"
+                           FontAttributes="Bold"
+                           Margin="16,4,16,4" />
+
+                    <!-- All Items List -->
+                    <CollectionView ItemsSource="{Binding Items}">
+                        <CollectionView.EmptyView>
+                            <Label Text="No items found"
+                                   HorizontalOptions="Center"
+                                   TextColor="Gray"
+                                   Margin="16" />
+                        </CollectionView.EmptyView>
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="models:Item">
+                                <Grid Padding="16,8" ColumnDefinitions="*,Auto">
+                                    <VerticalStackLayout Grid.Column="0" Spacing="4">
+                                        <Label Text="{Binding Title}"
+                                               FontSize="16"
+                                               FontAttributes="Bold" />
+                                        <Label Text="{Binding Category}"
+                                               FontSize="12"
+                                               TextColor="Gray" />
+                                        <Label Text="{Binding Location}"
+                                               FontSize="12"
+                                               TextColor="Gray" />
+                                    </VerticalStackLayout>
+                                    <Label Grid.Column="1"
+                                           Text="{Binding DailyRate, StringFormat='£{0:F2}/day'}"
+                                           FontSize="14"
+                                           FontAttributes="Bold"
+                                           VerticalOptions="Center" />
+                                    <Grid.GestureRecognizers>
+                                        <TapGestureRecognizer
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type viewmodels:ItemsListViewModel}}, Path=GoToItemDetailCommand}"
+                                            CommandParameter="{Binding .}" />
+                                    </Grid.GestureRecognizers>
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+
+                </VerticalStackLayout>
+            </VerticalStackLayout>
+        </ScrollView>
+    </RefreshView>
 </ContentPage>

@@ -16,6 +16,6 @@ public partial class RentalsPage : ContentPage
     protected override void OnAppearing()
     {
         base.OnAppearing();
-        _viewModel.LoadRentalsCommand.Execute(null);
+        ((RentalsViewModel)BindingContext).LoadRentalsCommand.Execute(null);
     }
 }

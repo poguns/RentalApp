@@ -6,16 +6,24 @@ namespace StarterApp.Services;
 public class ApiItemService : IItemService
 {
     private readonly HttpClient _httpClient;
+    private readonly IAuthenticationService _authService;
 
-    public ApiItemService(HttpClient httpClient)
+    public ApiItemService(HttpClient httpClient, IAuthenticationService authService)
     {
         _httpClient = httpClient;
+        _authService = authService;
     }
 
     public async Task<List<Item>> GetItemsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<ApiItemsWrapper>("items");
-        return response?.Items?.Select(r => MapToItem(r)).ToList() ?? new List<Item>();
+        var response = await _httpClient.GetAsync("items");
+        if (!response.IsSuccessStatusCode)
+        {
+            var raw = await response.Content.ReadAsStringAsync();
+            throw new Exception($"GetItems failed: {raw}");
+        }
+        var result = await _httpClient.GetFromJsonAsync<ApiItemsWrapper>("items");
+        return result?.Items?.Select(r => MapToItem(r)).ToList() ?? new List<Item>();
     }
 
     public async Task<Item?> GetItemAsync(int id)
@@ -26,24 +34,48 @@ public class ApiItemService : IItemService
 
     public async Task<List<Item>> GetMyItemsAsync()
     {
-        var response = await _httpClient.GetFromJsonAsync<ApiItemsWrapper>("items/mine");
-        return response?.Items?.Select(r => MapToItem(r)).ToList() ?? new List<Item>();
+        var allItems = await GetItemsAsync();
+        var currentUserId = _authService.CurrentUser?.Id;
+        if (currentUserId == null) return new List<Item>();
+        return allItems.Where(i => i.OwnerId == currentUserId).ToList();
     }
 
     public async Task<Item> CreateItemAsync(string title, string description,
                                              decimal dailyRate, string category,
                                              string location)
     {
+        // map category string to API categoryId
+        var categoryId = category switch
+        {
+            "Tools" => 1,
+            "Garden" => 2,
+            "Camping" => 3,
+            "Sports" => 4,
+            "Electronics" => 5,
+            "Games" => 6,
+            "DIY" => 7,
+            "Cycling" => 8,
+            "Music" => 9,
+            "Outdoors" => 10,
+            _ => 1
+        };
+
         var response = await _httpClient.PostAsJsonAsync("items", new
         {
             title,
             description,
             dailyRate,
-            category,
-            location
+            categoryId,
+            latitude = 55.9533, // default coordinates
+            longitude = -3.1883
         });
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var raw = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Request failed: {raw}");
+        }
+
         var created = await response.Content.ReadFromJsonAsync<ApiItemResponse>();
         return MapToItem(created!);
     }
@@ -55,11 +87,29 @@ public class ApiItemService : IItemService
             title = item.Title,
             description = item.Description,
             dailyRate = item.DailyRate,
-            category = item.Category,
-            location = item.Location
+            categoryId = item.Category switch
+            {
+                "Tools" => 1,
+                "Garden" => 2,
+                "Camping" => 3,
+                "Sports" => 4,
+                "Electronics" => 5,
+                "Games" => 6,
+                "DIY" => 7,
+                "Cycling" => 8,
+                "Music" => 9,
+                "Outdoors" => 10,
+                _ => 1
+            },
+            latitude = 55.9533, //default coordinates
+            longitude = -3.1883
         });
 
-        response.EnsureSuccessStatusCode();
+        if (!response.IsSuccessStatusCode)
+        {
+            var raw = await response.Content.ReadAsStringAsync();
+            throw new Exception($"Update failed: {raw}");
+        }
     }
 
     public async Task DeleteItemAsync(int id)
@@ -92,6 +142,8 @@ public class ApiItemService : IItemService
         int OwnerId,
         DateTime CreatedAt
     );
+
+    private record ApiErrorResponse(string Error, string Message);
 
     private class ApiItemsWrapper
     {
